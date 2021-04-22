@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { DataGrid, ColDef, CellParams } from "@material-ui/data-grid";
 import { Chip } from "@material-ui/core";
+
 import { getAllLaunches, MissionData } from "../utils/data";
+import LaunchModal from "./LaunchModal/LaunchModal";
 
 const columns: ColDef[] = [
   { field: "id", headerName: "No:", flex: 0.5 },
@@ -31,6 +33,9 @@ const columns: ColDef[] = [
 
 export default function DataTable() {
   const [rows, setRows] = useState(new Array<MissionData>());
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedLaunch, setSelectedLaunch] = useState<MissionData>();
+
   useEffect(() => {
     async function loadData() {
       setRows(await getAllLaunches());
@@ -40,7 +45,23 @@ export default function DataTable() {
 
   return (
     <div style={{ height: 400, width: "100%" }}>
-      <DataGrid rows={rows} columns={columns} pageSize={5} autoPageSize />
+      <DataGrid
+        rows={rows}
+        columns={columns}
+        pageSize={5}
+        autoPageSize
+        onRowClick={(rowParams) => {
+          setSelectedLaunch(rows[(rowParams.row.id as number) - 1]);
+          setModalOpen(true);
+        }}
+      />
+      {
+        <LaunchModal
+          setModalOpen={setModalOpen}
+          modalOpen={modalOpen}
+          selectedLaunch={selectedLaunch}
+        />
+      }
     </div>
   );
 }

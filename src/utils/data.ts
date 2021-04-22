@@ -39,3 +39,12 @@ export async function getAllLaunches(): Promise<Array<MissionData>> {
     return [];
   }
 }
+
+export async function getOneLaunch(launchId: string) {
+  // curl --location --request GET ''
+  const response = await axios.get(
+    `https://api.spacexdata.com/v3/launches/${launchId}`
+  );
+  console.log({ launch: response.data });
+  return response.data;
+}
