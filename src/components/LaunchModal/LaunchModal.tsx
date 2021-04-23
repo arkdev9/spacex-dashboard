@@ -1,12 +1,27 @@
-import React from "react";
+import { FC, useEffect, useState } from "react";
 
-import { Modal, Box, Typography } from "@material-ui/core";
+import { Modal, Box } from "@material-ui/core";
 import ModalHeader from "./ModalHeader";
 
 import useModalStyles from "../../styles/LaunchModal";
+import { getOneLaunch, MissionData } from "../../utils/data";
 
-export default function LaunchModal(props: any) {
+type ModalProps = {
+  modalOpen: boolean;
+  setModalOpen: Function;
+  selectedLaunch: MissionData;
+};
+
+const LaunchModal: FC<ModalProps> = (props) => {
   const modalClasses = useModalStyles();
+  const [missionData, setMissionData] = useState<MissionData>();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setMissionData(await getOneLaunch(props.selectedLaunch.id.toString()));
+    };
+    fetchData();
+  });
 
   return (
     <Modal
@@ -16,10 +31,10 @@ export default function LaunchModal(props: any) {
       aria-describedby="simple-modal-description"
     >
       <Box className={modalClasses.paper}>
-        {props.selectedLaunch !== undefined && (
-          <ModalHeader selectedLaunch={props.selectedLaunch} />
-        )}
+        {missionData !== undefined && <ModalHeader missionData={missionData} />}
       </Box>
     </Modal>
   );
-}
+};
+
+export default LaunchModal;

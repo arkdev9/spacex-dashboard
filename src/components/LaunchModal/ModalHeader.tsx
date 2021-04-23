@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Card, CardContent, CardMedia, Typography } from "@material-ui/core";
-import { getOneLaunch } from "../../utils/data";
+import { getOneLaunch, MissionData } from "../../utils/data";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,22 +23,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function MediaControlCard(props: any) {
+type Props = {
+  missionData: MissionData;
+};
+
+const ModalHeader: FC<Props> = (props) => {
   const classes = useStyles();
-  const [missionDetails, setMissionDetails] = useState();
-  useEffect(() => {
-    const fetchData = async () => {
-      setMissionDetails(await getOneLaunch(props.selectedLaunch.id));
-    };
-    fetchData();
-  });
 
   return (
     <Card className={classes.root}>
       <div className={classes.details}>
         <CardContent className={classes.content}>
           <Typography component="h5" variant="h5">
-            {props.selectedLaunch.mission}
+            {props.missionData.mission}
           </Typography>
           <Typography variant="subtitle1" color="textSecondary">
             Mac Miller
@@ -52,4 +49,6 @@ export default function MediaControlCard(props: any) {
       />
     </Card>
   );
-}
+};
+
+export default ModalHeader;

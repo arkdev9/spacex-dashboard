@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, FC } from "react";
 import { DataGrid, ColDef, CellParams } from "@material-ui/data-grid";
 import { Chip } from "@material-ui/core";
 
@@ -31,7 +31,7 @@ const columns: ColDef[] = [
   { field: "rocket", headerName: "Rocket", flex: 1 },
 ];
 
-export default function DataTable() {
+const LaunchTable: FC = (props) => {
   const [rows, setRows] = useState(new Array<MissionData>());
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedLaunch, setSelectedLaunch] = useState<MissionData>();
@@ -55,13 +55,15 @@ export default function DataTable() {
           setModalOpen(true);
         }}
       />
-      {
+      {selectedLaunch !== undefined && (
         <LaunchModal
           setModalOpen={setModalOpen}
           modalOpen={modalOpen}
           selectedLaunch={selectedLaunch}
         />
-      }
+      )}
     </div>
   );
-}
+};
+
+export default LaunchTable;
