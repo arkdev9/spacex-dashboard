@@ -1,10 +1,11 @@
 import { FC, useEffect, useState } from "react";
 
-import { Modal, Box } from "@material-ui/core";
+import { Modal, Box, Typography, Link } from "@material-ui/core";
 import ModalHeader from "./ModalHeader";
+import LaunchInfoTable from "./LaunchInfoTable";
 
 import useModalStyles from "../../styles/LaunchModal";
-import { getOneLaunch, MissionData } from "../../utils/data";
+import { getOneLaunch, LaunchDetails, MissionData } from "../../utils/data";
 
 type ModalProps = {
   modalOpen: boolean;
@@ -14,14 +15,14 @@ type ModalProps = {
 
 const LaunchModal: FC<ModalProps> = (props) => {
   const modalClasses = useModalStyles();
-  const [missionData, setMissionData] = useState<MissionData>();
+  const [launchDetails, setLaunchDetails] = useState<LaunchDetails>();
 
   useEffect(() => {
     const fetchData = async () => {
-      setMissionData(await getOneLaunch(props.selectedLaunch.id.toString()));
+      setLaunchDetails(await getOneLaunch(props.selectedLaunch.id.toString()));
     };
     fetchData();
-  });
+  }, [props.selectedLaunch.id]);
 
   return (
     <Modal
@@ -29,9 +30,19 @@ const LaunchModal: FC<ModalProps> = (props) => {
       onClose={() => props.setModalOpen(false)}
       aria-labelledby="simple-modal-title"
       aria-describedby="simple-modal-description"
+      style={{ outline: "none" }}
     >
       <Box className={modalClasses.paper}>
-        {missionData !== undefined && <ModalHeader missionData={missionData} />}
+        {launchDetails !== undefined && (
+          <>
+            <ModalHeader launchDetails={launchDetails} />
+            <Typography>
+              {launchDetails.details || <i>No launch details found.</i>}{" "}
+              <Link href="launchDetails.links.wikipedia">Wikipedia</Link>
+            </Typography>
+            <LaunchInfoTable launchDetails={launchDetails} />
+          </>
+        )}
       </Box>
     </Modal>
   );

@@ -1,7 +1,17 @@
-import React, { FC, useEffect, useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import { Card, CardContent, CardMedia, Typography } from "@material-ui/core";
-import { getOneLaunch, MissionData } from "../../utils/data";
+import { FC } from "react";
+import {
+  makeStyles,
+  Chip,
+  Card,
+  CardContent,
+  CardMedia,
+  Typography,
+  Grid,
+  IconButton,
+} from "@material-ui/core";
+import YouTubeIcon from "@material-ui/icons/YouTube";
+import MenuBookIcon from "@material-ui/icons/MenuBook";
+import { LaunchDetails } from "../../utils/data";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,29 +34,56 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 type Props = {
-  missionData: MissionData;
+  launchDetails: LaunchDetails;
 };
 
 const ModalHeader: FC<Props> = (props) => {
   const classes = useStyles();
 
   return (
-    <Card className={classes.root}>
+    <Card elevation={0} className={classes.root}>
+      <CardMedia
+        className={classes.cover}
+        image={props.launchDetails.links.mission_patch_link}
+        title="Live from space album cover"
+      />
       <div className={classes.details}>
         <CardContent className={classes.content}>
           <Typography component="h5" variant="h5">
-            {props.missionData.mission}
+            {props.launchDetails.mission_name}{" "}
+            <Chip
+              label={props.launchDetails.launch_state}
+              color={
+                props.launchDetails.launch_state === "Upcoming"
+                  ? "default"
+                  : props.launchDetails.launch_state === "Success"
+                  ? "primary"
+                  : "secondary"
+              }
+            />
           </Typography>
           <Typography variant="subtitle1" color="textSecondary">
-            Mac Miller
+            {props.launchDetails.rocket.name}
           </Typography>
+          <Grid
+            container
+            direction="row"
+            justify="flex-start"
+            alignItems="center"
+          >
+            <Grid item>
+              <IconButton>
+                <MenuBookIcon fontSize="small" />
+              </IconButton>
+            </Grid>
+            <Grid item>
+              <IconButton>
+                <YouTubeIcon fontSize="small" />
+              </IconButton>
+            </Grid>
+          </Grid>
         </CardContent>
       </div>
-      <CardMedia
-        className={classes.cover}
-        image="/static/images/cards/live-from-space.jpg"
-        title="Live from space album cover"
-      />
     </Card>
   );
 };

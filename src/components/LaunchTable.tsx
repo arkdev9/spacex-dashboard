@@ -44,11 +44,10 @@ const LaunchTable: FC = (props) => {
   });
 
   return (
-    <div style={{ height: 400, width: "100%" }}>
+    <div style={{ height: 800, width: "100%" }}>
       <DataGrid
         rows={rows}
         columns={columns}
-        pageSize={5}
         autoPageSize
         onRowClick={(rowParams) => {
           setSelectedLaunch(rows[(rowParams.row.id as number) - 1]);
