@@ -50,7 +50,7 @@ export async function getAllLaunches(): Promise<Array<MissionData>> {
     const data: MissionData[] = loadedResp.data.map((launch: any) => ({
       id: launch.flight_number,
       launched: new Date(launch.launch_date_utc),
-      location: launch.site_name,
+      location: launch.launch_site.site_name,
       mission: launch.mission_name,
       orbit: launch.rocket.second_stage.payloads[0].orbit,
       launchState: launch.upcoming
@@ -76,7 +76,6 @@ export async function getOneLaunch(launchId: string) {
     `https://api.spacexdata.com/v3/launches/${launchId}`
   );
   const data = response.data;
-  console.log(data);
   const payload = data.rocket.second_stage.payloads[0];
   // Create a LaunchDetails typed obj from response
   const launchDetails: LaunchDetails = {

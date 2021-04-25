@@ -1,13 +1,23 @@
-import React, { useState, useEffect, FC } from "react";
+import { useState, useEffect, FC } from "react";
 import { DataGrid, ColDef, CellParams } from "@material-ui/data-grid";
-import { Chip } from "@material-ui/core";
+import { Chip, Typography } from "@material-ui/core";
 
 import { getAllLaunches, MissionData } from "../utils/data";
+import { DateRange } from "materialui-daterange-picker";
+
 import LaunchModal from "./LaunchModal/LaunchModal";
+import Filters from "./Filters";
 
 const columns: ColDef[] = [
   { field: "id", headerName: "No:", flex: 0.5 },
-  { field: "launched", headerName: "Launched", flex: 1.5 },
+  {
+    field: "launched",
+    headerName: "Launched",
+    renderCell: (params: CellParams) => (
+      <Typography>{params.value?.toLocaleString()}</Typography>
+    ),
+    flex: 1.5,
+  },
   { field: "location", headerName: "Location", flex: 1 },
   { field: "mission", headerName: "Mission", flex: 1 },
   { field: "orbit", headerName: "Orbit", flex: 1 },
@@ -43,8 +53,11 @@ const LaunchTable: FC = (props) => {
     loadData();
   });
 
+  const filterByDates = (dateRange: DateRange) => {};
+
   return (
     <div style={{ height: 800, width: "100%" }}>
+      <Filters />
       <DataGrid
         rows={rows}
         columns={columns}

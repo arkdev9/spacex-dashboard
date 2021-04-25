@@ -70,10 +70,10 @@ const LaunchInfoTable: FC<Props> = (props) => {
           </TableRow>
           <TableRow>
             <TableCell component="th" scope="row">
-              Flight Number
+              Launch Date
             </TableCell>
             <TableCell component="th" scope="row">
-              {props.launchDetails.launch_date.toUTCString()}
+              {props.launchDetails.launch_date.toLocaleString()}
             </TableCell>
           </TableRow>
           <TableRow>
