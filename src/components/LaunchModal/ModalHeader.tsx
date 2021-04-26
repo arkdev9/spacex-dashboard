@@ -8,6 +8,7 @@ import {
   Typography,
   Grid,
   IconButton,
+  Link,
 } from "@material-ui/core";
 import YouTubeIcon from "@material-ui/icons/YouTube";
 import MenuBookIcon from "@material-ui/icons/MenuBook";
@@ -73,12 +74,16 @@ const ModalHeader: FC<Props> = (props) => {
           >
             <Grid item>
               <IconButton>
-                <MenuBookIcon fontSize="small" />
+                <Link href={props.launchDetails.links.wikipedia}>
+                  <MenuBookIcon fontSize="small" />
+                </Link>
               </IconButton>
             </Grid>
             <Grid item>
               <IconButton>
-                <YouTubeIcon fontSize="small" />
+                <Link href={props.launchDetails.links.video_link}>
+                  <YouTubeIcon fontSize="small" />
+                </Link>
               </IconButton>
             </Grid>
           </Grid>
