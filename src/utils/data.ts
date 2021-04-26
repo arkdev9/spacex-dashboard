@@ -47,19 +47,21 @@ export async function getAllLaunches(): Promise<Array<MissionData>> {
   );
 
   if (loadedResp.status === 200) {
-    const data: MissionData[] = loadedResp.data.map((launch: any) => ({
-      id: launch.flight_number,
-      launched: new Date(launch.launch_date_utc),
-      location: launch.launch_site.site_name,
-      mission: launch.mission_name,
-      orbit: launch.rocket.second_stage.payloads[0].orbit,
-      launchState: launch.upcoming
-        ? "Upcoming"
-        : launch.launch_success
-        ? "Success"
-        : "Failed",
-      rocket: launch.rocket.rocket_name,
-    }));
+    const data: MissionData[] = loadedResp.data.map(
+      (launch: any, idx: number) => ({
+        id: idx + 1,
+        launched: new Date(launch.launch_date_utc),
+        location: launch.launch_site.site_name,
+        mission: launch.mission_name,
+        orbit: launch.rocket.second_stage.payloads[0].orbit,
+        launchState: launch.upcoming
+          ? "Upcoming"
+          : launch.launch_success
+          ? "Success"
+          : "Failed",
+        rocket: launch.rocket.rocket_name,
+      })
+    );
     return data;
   } else {
     // Preferably propagate this error to client

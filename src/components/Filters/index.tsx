@@ -2,6 +2,7 @@ import { FC, useState } from "react";
 import { Box, Button, Grid } from "@material-ui/core";
 
 import DatePicker from "./DatePicker";
+import LaunchStatusModal from "./LaunchStatusModal";
 import { DateRange } from "materialui-daterange-picker";
 
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
@@ -10,11 +11,15 @@ import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 
 type Props = {
   filterByDates: (dateRange: DateRange) => void;
+  filterByLaunchStatus: (targetStatus: string) => void;
 };
 
 const Filters: FC<Props> = (props) => {
   const [pickingDate, setPickingDate] = useState(false);
+  const [pickingLaunchStatus, setPickingLaunchStatus] = useState(false);
   const toggle = () => setPickingDate(!pickingDate);
+  const togglePickingLaunchStatus = () =>
+    setPickingLaunchStatus(!pickingLaunchStatus);
 
   return (
     <Box mb={2}>
@@ -41,7 +46,7 @@ const Filters: FC<Props> = (props) => {
             color="primary"
             startIcon={<FilterListIcon />}
             endIcon={<ArrowDropDownIcon />}
-            onClick={() => setPickingDate(!pickingDate)}
+            onClick={() => setPickingLaunchStatus(!pickingLaunchStatus)}
           >
             Launch Status
           </Button>
@@ -51,6 +56,11 @@ const Filters: FC<Props> = (props) => {
         open={pickingDate}
         toggle={toggle}
         filterByDates={props.filterByDates}
+      />
+      <LaunchStatusModal
+        open={pickingLaunchStatus}
+        toggle={togglePickingLaunchStatus}
+        filterByLaunchStatus={props.filterByLaunchStatus}
       />
     </Box>
   );

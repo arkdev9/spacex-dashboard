@@ -9,7 +9,14 @@ import LaunchModal from "./LaunchModal/LaunchModal";
 import Filters from "./Filters";
 
 const columns: ColDef[] = [
-  { field: "id", headerName: "No:", flex: 0.5 },
+  {
+    field: "id",
+    headerName: "No:",
+    flex: 0.5,
+    sortable: false,
+    hideSortIcons: true,
+    disableColumnMenu: true,
+  },
   {
     field: "launched",
     headerName: "Launched",
@@ -17,6 +24,9 @@ const columns: ColDef[] = [
       <Typography>{params.value?.toLocaleString()}</Typography>
     ),
     flex: 1.5,
+    sortable: false,
+    hideSortIcons: true,
+    disableColumnMenu: true,
   },
   { field: "location", headerName: "Location", flex: 1 },
   { field: "mission", headerName: "Mission", flex: 1 },
@@ -37,6 +47,9 @@ const columns: ColDef[] = [
       />
     ),
     flex: 1,
+    sortable: false,
+    hideSortIcons: true,
+    disableColumnMenu: true,
   },
   { field: "rocket", headerName: "Rocket", flex: 1 },
 ];
@@ -46,6 +59,7 @@ const LaunchTable: FC = (props) => {
   const [data, setData] = useState(new Array<MissionData>());
   // `rows` will contain a subset of the response with filters applied
   const [rows, setRows] = useState(new Array<MissionData>());
+
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedLaunch, setSelectedLaunch] = useState<MissionData>();
 
@@ -72,9 +86,27 @@ const LaunchTable: FC = (props) => {
     setRows(filtered);
   };
 
+  const filterByLaunchStatus = (targetStatus: string) => {
+    if (targetStatus === "All") {
+      setRows(data);
+      return;
+    }
+    const filtered = new Array<MissionData>();
+    for (const row of data) {
+      if (row.launchState === targetStatus) {
+        filtered.push(row);
+      }
+    }
+
+    setRows(filtered);
+  };
+
   return (
     <div style={{ height: 800, width: "100%" }}>
-      <Filters filterByDates={filterByDates} />
+      <Filters
+        filterByDates={filterByDates}
+        filterByLaunchStatus={filterByLaunchStatus}
+      />
       <DataGrid
         rows={rows}
         columns={columns}
