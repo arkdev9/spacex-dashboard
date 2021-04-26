@@ -2,7 +2,7 @@ import { useState, useEffect, FC } from "react";
 import { useLocation, useHistory } from "react-router-dom";
 
 import { DataGrid, ColDef, CellParams } from "@material-ui/data-grid";
-import { Chip, Typography } from "@material-ui/core";
+import { Box, Chip, Typography } from "@material-ui/core";
 
 import { getAllLaunches, MissionData } from "../utils/data";
 import {
@@ -30,8 +30,6 @@ const columns: ColDef[] = [
       <Typography>{params.value?.toLocaleString()}</Typography>
     ),
     flex: 1.5,
-    sortable: false,
-    hideSortIcons: true,
     disableColumnMenu: true,
   },
   { field: "location", headerName: "Location", flex: 1 },
@@ -122,7 +120,7 @@ const LaunchTable: FC = (props) => {
   filteredRows = getFilteredRowsByLaunchStatus(filteredRows, statusFilter);
 
   return (
-    <div style={{ height: 800, width: "100%" }}>
+    <Box width="100%" height={700}>
       <Filters
         filterByDates={filterByDates}
         filterByLaunchStatus={filterByLaunchStatus}
@@ -145,7 +143,7 @@ const LaunchTable: FC = (props) => {
           selectedLaunch={selectedLaunch}
         />
       )}
-    </div>
+    </Box>
   );
 };
 
