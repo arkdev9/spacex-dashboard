@@ -1,8 +1,14 @@
 import { useState, useEffect, FC } from "react";
+import { useLocation, useHistory } from "react-router-dom";
+
 import { DataGrid, ColDef, CellParams } from "@material-ui/data-grid";
 import { Chip, Typography } from "@material-ui/core";
 
 import { getAllLaunches, MissionData } from "../utils/data";
+import {
+  getFilteredRowsByDate,
+  getFilteredRowsByLaunchStatus,
+} from "../utils/filters";
 import { DateRange } from "materialui-daterange-picker";
 
 import LaunchModal from "./LaunchModal/LaunchModal";
@@ -54,23 +60,47 @@ const columns: ColDef[] = [
   { field: "rocket", headerName: "Rocket", flex: 1 },
 ];
 
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
 const LaunchTable: FC = (props) => {
-  // `data` will contain the API response
-  const [data, setData] = useState(new Array<MissionData>());
-  // `rows` will contain a subset of the response with filters applied
-  const [rows, setRows] = useState(new Array<MissionData>());
+  const history = useHistory();
+  const query = useQuery();
 
-  const [statusFilter, setStatusFilter] = useState("All");
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState(new Array<MissionData>());
+
+  const [statusFilter, setStatusFilter] = useState<string>("All");
   const [dateRangeFilter, setDateRangeFilter] = useState<DateRange>();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedLaunch, setSelectedLaunch] = useState<MissionData>();
 
   useEffect(() => {
+    const params = new URLSearchParams();
+    params.append("status", statusFilter);
+    params.append("dateRange", JSON.stringify(dateRangeFilter));
+    history.push({ search: params.toString() });
+  }, [statusFilter, dateRangeFilter, history]);
+
+  // Load Data Inital
+  useEffect(() => {
     async function loadData() {
       const allLaunches = await getAllLaunches();
       setData(allLaunches);
-      setRows(allLaunches);
+      setLoading(false);
+      if (query.get("status")) {
+        setStatusFilter(query.get("status")!);
+      }
+      if (query.get("dateRange") && query.get("dateRange") !== "undefined") {
+        const parsed = JSON.parse(query.get("dateRange")!);
+        const newObj: DateRange = {
+          startDate: new Date(parsed.startDate),
+          endDate: new Date(parsed.endDate),
+        };
+        console.log(newObj);
+        setDateRangeFilter(newObj);
+      }
     }
     loadData();
   }, []);
@@ -84,41 +114,6 @@ const LaunchTable: FC = (props) => {
   const clearFilters = () => {
     setDateRangeFilter(undefined);
     setStatusFilter("All");
-  };
-
-  const getFilteredRowsByDate = (
-    sourceRows: Array<MissionData>,
-    dateRange: DateRange | undefined
-  ) => {
-    if (dateRange === undefined) return sourceRows;
-
-    const filtered = new Array<MissionData>();
-    const startTime = dateRange.startDate?.getTime();
-    const endTime = dateRange.endDate?.getTime();
-    for (const row of sourceRows) {
-      const launchTime = row.launched.getTime();
-      if (launchTime < endTime! && launchTime > startTime!) {
-        filtered.push(row);
-      }
-    }
-
-    return filtered;
-  };
-
-  const getFilteredRowsByLaunchStatus = (
-    sourceRows: Array<MissionData>,
-    targetStatus: string
-  ) => {
-    if (targetStatus === "All") return sourceRows;
-
-    const filtered = new Array<MissionData>();
-    for (const row of sourceRows) {
-      if (row.launchState === targetStatus) {
-        filtered.push(row);
-      }
-    }
-
-    return filtered;
   };
 
   // Applying filters
@@ -137,6 +132,7 @@ const LaunchTable: FC = (props) => {
         rows={filteredRows}
         columns={columns}
         autoPageSize
+        loading={loading}
         onRowClick={(rowParams) => {
           setSelectedLaunch(filteredRows[(rowParams.row.id as number) - 1]);
           setModalOpen(true);
