@@ -42,22 +42,39 @@ const columns: ColDef[] = [
 ];
 
 const LaunchTable: FC = (props) => {
+  // `data` will contain the API response
+  const [data, setData] = useState(new Array<MissionData>());
+  // `rows` will contain a subset of the response with filters applied
   const [rows, setRows] = useState(new Array<MissionData>());
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedLaunch, setSelectedLaunch] = useState<MissionData>();
 
   useEffect(() => {
     async function loadData() {
-      setRows(await getAllLaunches());
+      const allLaunches = await getAllLaunches();
+      setData(allLaunches);
+      setRows(allLaunches);
     }
     loadData();
-  });
+  }, []);
 
-  const filterByDates = (dateRange: DateRange) => {};
+  const filterByDates = (dateRange: DateRange) => {
+    const filtered = new Array<MissionData>();
+    const startTime = dateRange.startDate?.getTime();
+    const endTime = dateRange.endDate?.getTime();
+    for (const row of data) {
+      const launchTime = row.launched.getTime();
+      if (launchTime < endTime! && launchTime > startTime!) {
+        filtered.push(row);
+      }
+    }
+
+    setRows(filtered);
+  };
 
   return (
     <div style={{ height: 800, width: "100%" }}>
-      <Filters />
+      <Filters filterByDates={filterByDates} />
       <DataGrid
         rows={rows}
         columns={columns}

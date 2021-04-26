@@ -8,17 +8,13 @@ import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 
-const Filters: FC = (props) => {
+type Props = {
+  filterByDates: (dateRange: DateRange) => void;
+};
+
+const Filters: FC<Props> = (props) => {
   const [pickingDate, setPickingDate] = useState(false);
   const toggle = () => setPickingDate(!pickingDate);
-
-  // Calculate 6 months ago as 180 days ago, set default start date
-  let sixMonthsAgo = new Date();
-  sixMonthsAgo.setDate(sixMonthsAgo.getDate() - 180);
-  const [dateRange, setDateRange] = useState<DateRange>({
-    startDate: sixMonthsAgo,
-    endDate: new Date(),
-  });
 
   return (
     <Box mb={2}>
@@ -51,7 +47,11 @@ const Filters: FC = (props) => {
           </Button>
         </Grid>
       </Grid>
-      <DatePicker open={pickingDate} toggle={toggle} />
+      <DatePicker
+        open={pickingDate}
+        toggle={toggle}
+        filterByDates={props.filterByDates}
+      />
     </Box>
   );
 };

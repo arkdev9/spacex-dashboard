@@ -4,7 +4,7 @@ import { DateRangePicker, DateRange } from "materialui-daterange-picker";
 type Props = {
   open: boolean;
   toggle: () => void;
-  setDateRange: () => void;
+  filterByDates: (dateRange: DateRange) => void;
 };
 
 const App: React.FunctionComponent<Props> = (props) => {
@@ -12,7 +12,7 @@ const App: React.FunctionComponent<Props> = (props) => {
     <DateRangePicker
       open={props.open}
       toggle={props.toggle}
-      onChange={(range: DateRange) => props.setDateRange(range)}
+      onChange={(range: DateRange) => props.filterByDates(range)}
     />
   );
 };
