@@ -38,7 +38,7 @@ const LaunchModal: FC<ModalProps> = (props) => {
             <ModalHeader launchDetails={launchDetails} />
             <Typography>
               {launchDetails.details || <i>No launch details found.</i>}{" "}
-              <Link href="launchDetails.links.wikipedia">Wikipedia</Link>
+              <Link href={launchDetails.links.wikipedia}>Wikipedia</Link>
             </Typography>
             <LaunchInfoTable launchDetails={launchDetails} />
           </>
