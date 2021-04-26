@@ -107,7 +107,7 @@ export async function getOneLaunch(launchId: string) {
     links: {
       mission_patch_link: data.links.mission_patch,
       wikipedia: data.links.wikipedia,
-      video_link: data.video_link,
+      video_link: data.links.video_link,
     },
   };
   return launchDetails;
