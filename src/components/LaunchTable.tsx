@@ -60,6 +60,9 @@ const LaunchTable: FC = (props) => {
   // `rows` will contain a subset of the response with filters applied
   const [rows, setRows] = useState(new Array<MissionData>());
 
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [dateRangeFilter, setDateRangeFilter] = useState<DateRange>();
+
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedLaunch, setSelectedLaunch] = useState<MissionData>();
 
@@ -73,46 +76,69 @@ const LaunchTable: FC = (props) => {
   }, []);
 
   const filterByDates = (dateRange: DateRange) => {
+    setDateRangeFilter(dateRange);
+  };
+  const filterByLaunchStatus = (status: string) => {
+    setStatusFilter(status);
+  };
+  const clearFilters = () => {
+    setDateRangeFilter(undefined);
+    setStatusFilter("All");
+  };
+
+  const getFilteredRowsByDate = (
+    sourceRows: Array<MissionData>,
+    dateRange: DateRange | undefined
+  ) => {
+    if (dateRange === undefined) return sourceRows;
+
     const filtered = new Array<MissionData>();
     const startTime = dateRange.startDate?.getTime();
     const endTime = dateRange.endDate?.getTime();
-    for (const row of data) {
+    for (const row of sourceRows) {
       const launchTime = row.launched.getTime();
       if (launchTime < endTime! && launchTime > startTime!) {
         filtered.push(row);
       }
     }
 
-    setRows(filtered);
+    return filtered;
   };
 
-  const filterByLaunchStatus = (targetStatus: string) => {
-    if (targetStatus === "All") {
-      setRows(data);
-      return;
-    }
+  const getFilteredRowsByLaunchStatus = (
+    sourceRows: Array<MissionData>,
+    targetStatus: string
+  ) => {
+    if (targetStatus === "All") return sourceRows;
+
     const filtered = new Array<MissionData>();
-    for (const row of data) {
+    for (const row of sourceRows) {
       if (row.launchState === targetStatus) {
         filtered.push(row);
       }
     }
 
-    setRows(filtered);
+    return filtered;
   };
+
+  // Applying filters
+  let filteredRows = new Array<MissionData>();
+  filteredRows = getFilteredRowsByDate(data, dateRangeFilter);
+  filteredRows = getFilteredRowsByLaunchStatus(filteredRows, statusFilter);
 
   return (
     <div style={{ height: 800, width: "100%" }}>
       <Filters
         filterByDates={filterByDates}
         filterByLaunchStatus={filterByLaunchStatus}
+        clearFilters={clearFilters}
       />
       <DataGrid
-        rows={rows}
+        rows={filteredRows}
         columns={columns}
         autoPageSize
         onRowClick={(rowParams) => {
-          setSelectedLaunch(rows[(rowParams.row.id as number) - 1]);
+          setSelectedLaunch(filteredRows[(rowParams.row.id as number) - 1]);
           setModalOpen(true);
         }}
       />

@@ -7,11 +7,13 @@ import { DateRange } from "materialui-daterange-picker";
 
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import FilterListIcon from "@material-ui/icons/FilterList";
+import ClearAllIcon from "@material-ui/icons/ClearAll";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 
 type Props = {
   filterByDates: (dateRange: DateRange) => void;
   filterByLaunchStatus: (targetStatus: string) => void;
+  clearFilters: () => void;
 };
 
 const Filters: FC<Props> = (props) => {
@@ -38,6 +40,16 @@ const Filters: FC<Props> = (props) => {
             onClick={() => setPickingDate(!pickingDate)}
           >
             Date
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button
+            variant="outlined"
+            color="secondary"
+            endIcon={<ClearAllIcon />}
+            onClick={() => props.clearFilters()}
+          >
+            Clear Filters
           </Button>
         </Grid>
         <Grid item>
